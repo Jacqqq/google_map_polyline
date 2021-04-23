@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:google_map_polyline/src/route_mode.dart';
+import 'package:google_map_polyline/src/routes_with_summary.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_map_polyline/src/polyline_request.dart';
 
@@ -46,6 +47,48 @@ class PolylineUtils {
     }
 
     return _coordinates;
+  }
+
+  Future<List<RoutesWithSummary>> getCoordinatesWithAlternatives() async {
+    List<RoutesWithSummary> routesWithSummary = [];
+
+    var qParam = {
+      'mode': getMode(_data.mode),
+      'key': _data.apiKey,
+      'alternatives': true,
+    };
+
+    if (_data.locationText) {
+      qParam['origin'] = _data.originText;
+      qParam['destination'] = _data.destinationText;
+    } else {
+      qParam['origin'] =
+      "${_data.originLoc.latitude},${_data.originLoc.longitude}";
+      qParam['destination'] =
+      "${_data.destinationLoc.latitude},${_data.destinationLoc.longitude}";
+    }
+
+    Response _response;
+    Dio _dio = new Dio();
+    _response = await _dio.get(
+        "https://maps.googleapis.com/maps/api/directions/json",
+        queryParameters: qParam);
+
+    try {
+      if (_response.statusCode == 200) {
+        var amountOfRoutes = _response.data['routes'].length;
+        for (int i = 0; i < amountOfRoutes; i++) {
+          routesWithSummary.add(RoutesWithSummary(decodeEncodedPolyline(
+              _response.data['routes'][i]['overview_polyline']['points']),
+              summary: _response.data['routes'][i]['summary'],
+              distance: _response.data['routes'][i]['legs'][0]['distance']['value']),
+          );
+        }
+      }
+    } catch (e) {
+      print('error');
+    }
+    return routesWithSummary;
   }
 
   List<LatLng> decodeEncodedPolyline(String encoded) {

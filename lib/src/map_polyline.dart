@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_map_polyline/src/route_mode.dart';
+import 'package:google_map_polyline/src/routes_with_summary.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_map_polyline/src/polyline_request.dart';
 import 'package:google_map_polyline/src/polyline_utils.dart';
@@ -29,6 +30,23 @@ class GoogleMapPolyline {
     _utils = new PolylineUtils(_data);
 
     return await _utils.getCoordinates();
+  }
+
+  Future<List<RoutesWithSummary>> getCoordinatesWithLocationAndAlternatives({
+    @required LatLng origin,
+    @required LatLng destination,
+    @required RouteMode mode,
+  }) async {
+    _data = new PolylineRequestData(
+        originLoc: origin,
+        destinationLoc: destination,
+        mode: mode,
+        locationText: false,
+        apiKey: apiKey);
+
+    _utils = new PolylineUtils(_data);
+
+    return await _utils.getCoordinatesWithAlternatives();
   }
 
   /// Get coordinates using Location Coordinates
