@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,7 +15,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _polylineCount = 1;
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
-  GoogleMapController _controller;
+  GoogleMapController? _controller;
 
   GoogleMapPolyline _googleMapPolyline =
       new GoogleMapPolyline(apiKey: "YOUR KEY HERE");
@@ -49,10 +51,10 @@ class _MyAppState extends State<MyApp> {
   _getPolylinesWithLocation() async {
     _setLoadingMenu(true);
     List<LatLng> _coordinates =
-        await _googleMapPolyline.getCoordinatesWithLocation(
+        await (_googleMapPolyline.getCoordinatesWithLocation(
             origin: _originLocation,
             destination: _destinationLocation,
-            mode: RouteMode.driving);
+            mode: RouteMode.driving) as FutureOr<List<LatLng>>);
 
     setState(() {
       _polylines.clear();
@@ -65,10 +67,10 @@ class _MyAppState extends State<MyApp> {
   _getPolylinesWithAddress() async {
     _setLoadingMenu(true);
     List<LatLng> _coordinates =
-        await _googleMapPolyline.getPolylineCoordinatesWithAddress(
+        await (_googleMapPolyline.getPolylineCoordinatesWithAddress(
             origin: '55 Kingston Ave, Brooklyn, NY 11213, USA',
             destination: '8007 Cypress Ave, Glendale, NY 11385, USA',
-            mode: RouteMode.driving);
+            mode: RouteMode.driving) as FutureOr<List<LatLng>>);
 
     setState(() {
       _polylines.clear();
@@ -130,11 +132,11 @@ class _MyAppState extends State<MyApp> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            RaisedButton(
+                            ElevatedButton(
                               child: Text('Polylines wtih Location'),
                               onPressed: _getPolylinesWithLocation,
                             ),
-                            RaisedButton(
+                            ElevatedButton(
                               child: Text('Polylines wtih Address'),
                               onPressed: _getPolylinesWithAddress,
                             ),
