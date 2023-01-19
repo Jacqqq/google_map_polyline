@@ -1,15 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:google_map_polyline/src/polyline_request.dart';
 import 'package:google_map_polyline/src/route_mode.dart';
 import 'package:google_map_polyline/src/routes_with_summary.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_map_polyline/src/polyline_request.dart';
 
 class PolylineUtils {
   PolylineRequestData? _data;
+
   PolylineUtils(this._data);
 
-  Future<List<LatLng>?> getCoordinates() async {
-    List<LatLng>? _coordinates;
+  Future<RoutesWithSummary?> getCoordinates() async {
+    RoutesWithSummary? routesWithSummary;
 
     var qParam = {
       'mode': getMode(_data!.mode),
@@ -37,16 +38,18 @@ class PolylineUtils {
         if (_response.data["status"] == "REQUEST_DENIED") {
           throw Exception(_response.data["error_message"]);
         }
-
-        _coordinates = decodeEncodedPolyline(
-            _response.data['routes'][0]['overview_polyline']['points']);
+        routesWithSummary = RoutesWithSummary(
+          decodeEncodedPolyline(_response.data['routes'][0]['overview_polyline']['points']),
+          summary: _response.data['routes'][0]['summary'],
+          distance: _response.data['routes'][0]['legs'][0]['distance']['value'],
+        );
       }
     } catch (e) {
       print('error!!!! $e');
       throw e;
     }
 
-    return _coordinates;
+    return routesWithSummary;
   }
 
   Future<List<RoutesWithSummary>> getCoordinatesWithAlternatives() async {
