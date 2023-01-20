@@ -18,10 +18,17 @@ class GoogleMapPolyline {
   Future<RoutesWithSummary?> getCoordinatesWithLocation({
     required LatLng origin,
     required LatLng destination,
+    required List<LatLng> waypoints,
     required RouteMode mode,
   }) async {
     _data = new PolylineRequestData(
-        originLoc: origin, destinationLoc: destination, mode: mode, locationText: false, apiKey: apiKey);
+      originLoc: origin,
+      destinationLoc: destination,
+      mode: mode,
+      locationText: false,
+      waypoints: waypoints,
+      apiKey: apiKey,
+    );
 
     _utils = new PolylineUtils(_data);
 

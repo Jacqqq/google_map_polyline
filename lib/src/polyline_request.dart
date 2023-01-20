@@ -9,6 +9,7 @@ class PolylineRequestData {
   RouteMode? mode;
   bool? locationText;
   String? apiKey;
+  List<LatLng> waypoints;
 
   PolylineRequestData({
     this.originLoc,
@@ -18,5 +19,6 @@ class PolylineRequestData {
     this.mode,
     this.locationText,
     this.apiKey,
+    this.waypoints = const [],
   });
 }

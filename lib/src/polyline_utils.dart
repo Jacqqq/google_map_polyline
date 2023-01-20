@@ -21,10 +21,10 @@ class PolylineUtils {
       qParam['origin'] = _data!.originText;
       qParam['destination'] = _data!.destinationText;
     } else {
-      qParam['origin'] =
-          "${_data!.originLoc!.latitude},${_data!.originLoc!.longitude}";
-      qParam['destination'] =
-          "${_data!.destinationLoc!.latitude},${_data!.destinationLoc!.longitude}";
+      qParam['origin'] = "${_data!.originLoc!.latitude},${_data!.originLoc!.longitude}";
+      qParam['destination'] = "${_data!.destinationLoc!.latitude},${_data!.destinationLoc!.longitude}";
+      if (_data!.waypoints.isNotEmpty)
+        qParam['waypoints'] = _data!.waypoints.map((e) => 'via${e.latitude},${e.longitude}').join();
     }
 
     Response _response;
